@@ -1,18 +1,32 @@
 package mythread.practise.randomclassesforpractise;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
- * Here in the output , the expected and Actual value for the id differs due to race condition and thread interleave issue.
- * Check PractiseOnRaceConditionWithLock class for its resolution through Lock.
+ * Check the PractiseOnRaceCondition for the issue.
+ * Then check this class for how it resolves that using Lock class.
  */
-public class PractiseOnRaceCondition {
+public class PractiseOnRaceConditionWithLock {
 
     int id=0;
+    Lock theLock= new ReentrantLock();
     public void increase(){
-        this.id++;
+        try{
+            theLock.lock();
+            this.id++;
+        }
+        catch (Exception e){
+            System.out.println("Exception occured during locking");
+        }
+        finally {
+            theLock.unlock();
+        }
+
     }
 
     public static void main(String[] args) throws InterruptedException {
-        PractiseOnRaceCondition practiseOnRaceCondition= new PractiseOnRaceCondition();
+        PractiseOnRaceConditionWithLock practiseOnRaceCondition= new PractiseOnRaceConditionWithLock();
 
         Thread[] myThreads= new Thread[70];
         for(int i=0;i<70;i++){
